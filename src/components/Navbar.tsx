@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 
 export default function Navbar() {
   return (
-    <header className="border-b border-border">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/40 bg-background/40 backdrop-blur-md backdrop-saturate-150">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link to="/home" className="text-lg font-semibold tracking-tight">
           storeproof

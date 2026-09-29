@@ -7,7 +7,17 @@ export default function Home() {
     <div className="flex min-h-svh flex-col">
       <Navbar />
 
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-6 py-24">
+      <main className="relative flex w-full flex-1 flex-col justify-center overflow-hidden">
+        <video
+          className="absolute inset-0 -z-10 h-full w-full object-cover"
+          src="/hero_bg.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+        <div className="absolute inset-0 -z-10 bg-background/70" />
+        <div className="mx-auto w-full max-w-6xl px-6 py-24">
         <h1 className="max-w-4xl text-[clamp(2.25rem,6vw,4.75rem)] leading-[1] font-semibold tracking-tighter">
           A £10 theft shouldn't cost you two hours of CCTV.
         </h1>
@@ -25,6 +35,7 @@ export default function Home() {
         <p className="mt-6 text-sm text-muted-foreground">
           For independent convenience stores. Works with your existing cameras.
         </p>
+        </div>
       </main>
 
       <Footer />
