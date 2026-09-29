@@ -8,17 +8,23 @@ export default function Home() {
       <Navbar />
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-6 py-24">
-        <h1 className="max-w-4xl text-[clamp(2.75rem,8vw,6.5rem)] leading-[0.95] font-semibold tracking-tighter">
-          Know a store is real before you buy.
+        <h1 className="max-w-4xl text-[clamp(2.25rem,6vw,4.75rem)] leading-[1] font-semibold tracking-tighter">
+          A £10 theft shouldn't cost you two hours of CCTV.
         </h1>
-        <p className="mt-8 max-w-md text-lg text-muted-foreground">
-          storeproof checks online stores so you can shop with confidence.
+        <p className="mt-8 max-w-2xl text-lg text-muted-foreground">
+          Your staff log what they saw while it's fresh. StoreProof finds the person in your footage, follows them from entry to exit, and hands you a timeline ready for Police Scotland. No rewinding, and no details lost between the shop floor and the office.
         </p>
         <div className="mt-10 flex gap-3">
           <Button size="lg" className="h-11 px-6 text-base">
-            Get started
+            Join the pilot
+          </Button>
+          <Button size="lg" variant="outline" className="h-11 px-6 text-base">
+            See how it works
           </Button>
         </div>
+        <p className="mt-6 text-sm text-muted-foreground">
+          For independent convenience stores. Works with your existing cameras.
+        </p>
       </main>
 
       <Footer />
