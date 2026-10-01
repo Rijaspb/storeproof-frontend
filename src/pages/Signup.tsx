@@ -39,7 +39,7 @@ export default function Signup() {
         businessName: String(form.get('businessName')).trim() || undefined,
         acceptedTerms: true, // server records the acceptance timestamp
       })
-      navigate('/home')
+      navigate('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {

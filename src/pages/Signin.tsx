@@ -23,7 +23,7 @@ export default function Signin() {
         email: String(form.get('email')).trim(),
         password: String(form.get('password')),
       })
-      navigate('/home')
+      navigate('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
