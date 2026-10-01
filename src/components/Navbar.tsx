@@ -16,12 +16,18 @@ export default function Navbar() {
 
         {/* Desktop */}
         <div className="hidden items-center gap-1 sm:flex">
-          <a
-            href="#about"
+          <Link
+            to="/about"
             className="px-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             About
-          </a>
+          </Link>
+          <Link
+            to="/contact"
+            className="px-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Contact
+          </Link>
           <Button variant="ghost" size="lg">
             Sign in
           </Button>
@@ -48,13 +54,20 @@ export default function Navbar() {
           id="mobile-menu"
           className="flex flex-col items-center border-t border-border/40 bg-background/95 px-4 pb-4 text-center sm:hidden"
         >
-          <a
-            href="#about"
+          <Link
+            to="/about"
             onClick={close}
             className="block w-full py-3 text-center text-base text-muted-foreground transition-colors hover:text-foreground"
           >
             About
-          </a>
+          </Link>
+          <Link
+            to="/contact"
+            onClick={close}
+            className="block w-full py-3 text-center text-base text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Contact
+          </Link>
           <div className="mt-1 flex w-full flex-col items-center gap-2">
             <Button
               variant="outline"
