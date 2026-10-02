@@ -3,6 +3,7 @@ import ProtectedRoute from '@/components/ProtectedRoute'
 import About from '@/pages/About'
 import Contact from '@/pages/Contact'
 import Dashboard from '@/pages/Dashboard'
+import IncidentDetail from '@/pages/IncidentDetail'
 import Home from '@/pages/Home'
 import Signin from '@/pages/Signin'
 import Signup from '@/pages/Signup'
@@ -18,6 +19,7 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/incidents/:id" element={<IncidentDetail />} />
       </Route>
     </Routes>
   )

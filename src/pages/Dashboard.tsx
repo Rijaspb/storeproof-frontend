@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { post } from '@/lib/api'
+import { useEffect, useState } from 'react'
+import { get, post } from '@/lib/api'
+import type { Incident } from '@/types/incident'
 import DashboardNavbar from '@/components/DashboardNavbar'
 import IncidentsTable from '@/components/IncidentsTable'
 import NewIncidentDialog, {
@@ -9,8 +10,18 @@ import NewIncidentDialog, {
 function Dashboard() {
   const [formOpen, setFormOpen] = useState(false)
 
+  const [incidents, setIncidents] = useState<Incident[]>([])
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    get('/incidents')
+      .then(setIncidents)
+      .catch((e: Error) => setError(e.message))
+  }, [])
+
   const createIncident = async (values: NewIncidentValues) => {
-    await post('/incidents', values)
+    const row = await post('/incidents', values)
+    setIncidents((prev) => [row, ...prev])
   }
 
   return (
@@ -18,7 +29,8 @@ function Dashboard() {
       <DashboardNavbar onNewForm={() => setFormOpen(true)} />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-10 pt-20 sm:px-6 sm:pt-24">
         <h1 className="mb-6 text-2xl font-semibold">Incidents</h1>
-        <IncidentsTable />
+        {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+        <IncidentsTable incidents={incidents} />
       </main>
       <NewIncidentDialog
         open={formOpen}

@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react'
+import { Link } from 'react-router'
+import { formatDateTime, formatStatus } from '@/lib/format'
 import type { Incident } from '@/types/incident'
 
 interface Column {
@@ -7,27 +9,34 @@ interface Column {
   render: (incident: Incident) => ReactNode
 }
 
-const formatDateTime = (iso: string) => {
-  const date = new Date(iso)
-  return Number.isNaN(date.getTime()) ? '—' : date.toLocaleString()
-}
-
 const columns: Column[] = [
-  { key: 'id', header: 'Incident ID', render: (i) => i.id },
   {
-    key: 'incidentAt',
-    header: 'Incident date/time',
-    render: (i) => formatDateTime(i.incidentAt),
+    key: 'incident_number',
+    header: 'Incident #',
+    // Stretched link: the ::after overlay makes the whole row clickable
+    render: (i) => (
+      <Link
+        to={`/dashboard/incidents/${encodeURIComponent(i.id)}`}
+        className="font-medium after:absolute after:inset-0"
+      >
+        {i.incident_number}
+      </Link>
+    ),
+  },
+  {
+    key: 'incident_at',
+    header: 'Date/time',
+    render: (i) => formatDateTime(i.incident_at),
   },
   {
     key: 'status',
     header: 'Status',
-    render: (i) => <span className="capitalize">{i.status}</span>,
+    render: (i) => <span className="capitalize">{formatStatus(i.status)}</span>,
   },
   {
-    key: 'createdAt',
-    header: 'Created at',
-    render: (i) => formatDateTime(i.createdAt),
+    key: 'created_at',
+    header: 'Created',
+    render: (i) => formatDateTime(i.created_at),
   },
 ]
 
@@ -66,7 +75,7 @@ export default function IncidentsTable({ incidents = [] }: IncidentsTableProps) 
             incidents.map((incident) => (
               <tr
                 key={incident.id}
-                className="border-b border-border last:border-0"
+                className="relative border-b border-border last:border-0 hover:bg-muted/50"
               >
                 {columns.map((c) => (
                   <td

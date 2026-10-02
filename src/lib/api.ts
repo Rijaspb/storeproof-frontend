@@ -2,17 +2,21 @@ import { supabase } from './supabase'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
-export async function post(path: string, body: unknown) {
+async function request(method: string, path: string, body?: unknown) {
   const { data: { session } } = await supabase.auth.getSession()
   const res = await fetch(`${API_URL}${path}`, {
-    method: 'POST',
+    method,
     headers: {
       'Content-Type': 'application/json',
       ...(session && { Authorization: `Bearer ${session.access_token}` }),
     },
-    body: JSON.stringify(body),
+    body: body === undefined ? undefined : JSON.stringify(body),
   })
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.message ?? 'Something went wrong')
+  if (!res.ok) throw new Error(data.error ?? 'Something went wrong')
   return data
 }
+
+export const get = (path: string) => request('GET', path)
+export const patch = (path: string, body: unknown) => request('PATCH', path, body)
+export const post =(path: string, body: unknown) => request('POST', path, body)

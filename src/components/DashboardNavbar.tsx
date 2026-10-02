@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { supabase } from '@/lib/supabase'
 
 interface DashboardNavbarProps {
-  onNewForm: () => void
+  onNewForm?: () => void
 }
 
 export default function DashboardNavbar({ onNewForm }: DashboardNavbarProps) {
@@ -26,9 +26,11 @@ export default function DashboardNavbar({ onNewForm }: DashboardNavbarProps) {
 
         {/* Desktop */}
         <div className="hidden items-center gap-2 sm:flex">
-          <Button size="lg" onClick={onNewForm}>
-            <Plus /> New form
-          </Button>
+          {onNewForm && (
+            <Button size="lg" onClick={onNewForm}>
+              <Plus /> New form
+            </Button>
+          )}
           <Button variant="ghost" size="lg" onClick={logout}>
             <LogOut /> Log out
           </Button>
@@ -54,16 +56,18 @@ export default function DashboardNavbar({ onNewForm }: DashboardNavbarProps) {
           id="dashboard-mobile-menu"
           className="flex flex-col gap-2 border-t border-border/40 bg-background/95 px-4 py-4 sm:hidden"
         >
-          <Button
-            size="lg"
-            className="h-11 w-full text-base"
-            onClick={() => {
-              setOpen(false)
-              onNewForm()
-            }}
-          >
-            <Plus /> New form
-          </Button>
+          {onNewForm && (
+            <Button
+              size="lg"
+              className="h-11 w-full text-base"
+              onClick={() => {
+                setOpen(false)
+                onNewForm()
+              }}
+            >
+              <Plus /> New form
+            </Button>
+          )}
           <Button
             variant="outline"
             size="lg"
