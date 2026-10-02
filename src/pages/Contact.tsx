@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
 import { Button } from '@/components/ui/button'
+import { post } from '@/lib/api'
 
 const inputClass =
   'mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring'
@@ -14,11 +15,27 @@ const details = [
 
 export default function Contact() {
   const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // TODO: send the form data to the backend.
-    setSent(true)
+    const form = new FormData(e.currentTarget)
+    setError('')
+    setLoading(true)
+    try {
+      await post('/contact', {
+        name: String(form.get('name')).trim(),
+        email: String(form.get('email')).trim(),
+        message: String(form.get('message')).trim(),
+        website: String(form.get('website')),
+      })
+      setSent(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -72,8 +89,21 @@ export default function Contact() {
                 Message
                 <textarea name="message" required rows={6} className={inputClass} />
               </label>
-              <Button type="submit" size="lg">
-                Send message
+              {/* Honeypot: hidden from people, filled in by bots */}
+              <input
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="hidden"
+              />
+              {error && (
+                <p role="alert" className="text-sm text-destructive">
+                  {error}
+                </p>
+              )}
+              <Button type="submit" size="lg" disabled={loading}>
+                {loading ? 'Sending…' : 'Send message'}
               </Button>
             </form>
           )}
