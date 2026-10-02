@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 
 export default function Hero() {
@@ -20,13 +21,20 @@ export default function Hero() {
           Your staff log what they saw while it's fresh. StoreProof finds the person on every camera that caught them and saves all their footage, from the moment they walk in to the moment they leave, ready to share with the police. No hunting through hours of video, and no details lost between the shop floor and the office.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row">
-          <Button size="lg" className="h-12 w-full px-6 text-base sm:h-11 sm:w-auto">
+          <Button
+            size="lg"
+            className="h-12 w-full px-6 text-base sm:h-11 sm:w-auto"
+            nativeButton={false}
+            render={<Link to="/signup" />}
+          >
             Join the pilot
           </Button>
           <Button
             size="lg"
             variant="outline"
             className="h-12 w-full px-6 text-base sm:h-11 sm:w-auto"
+            nativeButton={false}
+            render={<Link to="/about" />}
           >
             See how it works
           </Button>
