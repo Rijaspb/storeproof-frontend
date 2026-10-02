@@ -5,8 +5,11 @@ import Contact from '@/pages/Contact'
 import Dashboard from '@/pages/Dashboard'
 import IncidentDetail from '@/pages/IncidentDetail'
 import Home from '@/pages/Home'
+import NotFound from '@/pages/NotFound'
 import Signin from '@/pages/Signin'
+import Privacy from '@/pages/Privacy'
 import Signup from '@/pages/Signup'
+import Terms from '@/pages/Terms'
 
 function App() {
   return (
@@ -17,10 +20,13 @@ function App() {
       <Route path="/contact" element={<Contact />} />
       <Route path="/signin" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/incidents/:id" element={<IncidentDetail />} />
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }
