@@ -8,6 +8,7 @@ export default function Footer() {
         <nav aria-label="Footer" className="flex gap-4">
           <Link to="/terms" className="hover:text-foreground">Terms</Link>
           <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
+          <Link to="/dpa" className="hover:text-foreground">DPA</Link>
         </nav>
       </div>
     </footer>

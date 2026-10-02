@@ -53,6 +53,14 @@ export default function Terms() {
         </p>
       </LegalSection>
 
+      <LegalSection title="Data processing">
+        <p>
+          You're in charge of the footage and reports you add, and we process them on your
+          behalf. Our <Link to="/dpa" className="underline">Data Processing Agreement</Link>{' '}
+          sets out how, and forms part of these terms.
+        </p>
+      </LegalSection>
+
       <LegalSection title="Acceptable use">
         <p>You agree not to:</p>
         <ul className={list}>

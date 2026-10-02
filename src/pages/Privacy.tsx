@@ -25,7 +25,9 @@ export default function Privacy() {
             <strong className="text-foreground">Incident reports and footage</strong>{' '}
             about people in your shop: you are the controller and StoreProof is your
             processor. We only handle this data on your instructions, to provide the
-            service. You decide what to record and what to share.
+            service, as set out in our{' '}
+            <Link to="/dpa" className="underline">Data Processing Agreement</Link>. You
+            decide what to record and what to share.
           </li>
         </ul>
       </LegalSection>

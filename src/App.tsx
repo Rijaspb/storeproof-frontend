@@ -7,6 +7,7 @@ import IncidentDetail from '@/pages/IncidentDetail'
 import Home from '@/pages/Home'
 import NotFound from '@/pages/NotFound'
 import Signin from '@/pages/Signin'
+import Dpa from '@/pages/Dpa'
 import Privacy from '@/pages/Privacy'
 import Signup from '@/pages/Signup'
 import Terms from '@/pages/Terms'
@@ -22,6 +23,7 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/dpa" element={<Dpa />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/incidents/:id" element={<IncidentDetail />} />
