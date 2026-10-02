@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router'
+import ProtectedRoute from '@/components/ProtectedRoute'
 import About from '@/pages/About'
 import Contact from '@/pages/Contact'
 import Dashboard from '@/pages/Dashboard'
@@ -15,7 +16,9 @@ function App() {
       <Route path="/contact" element={<Contact />} />
       <Route path="/signin" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Route>
     </Routes>
   )
 }

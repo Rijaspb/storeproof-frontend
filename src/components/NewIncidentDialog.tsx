@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button'
 
 export interface NewIncidentValues {
   /** Value from a datetime-local input, e.g. "2026-10-01T14:30" */
-  incidentAt: string
+  incident_at: string
+  person_details: string
+  incident_details: string
   notes: string
 }
 
@@ -16,6 +18,12 @@ interface NewIncidentDialogProps {
 
 const inputClass =
   'mt-1.5 block w-full min-w-0 max-w-full rounded-md border border-input bg-background px-3 py-2 text-base outline-none sm:text-sm focus-visible:ring-2 focus-visible:ring-ring'
+
+/** Current local time in datetime-local format, e.g. "2026-10-01T14:30" */
+const nowLocal = () =>
+  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 16)
 
 export default function NewIncidentDialog({
   open,
@@ -38,7 +46,9 @@ export default function NewIncidentDialog({
     setLoading(true)
     try {
       await onSubmit({
-        incidentAt: String(form.get('incidentAt')),
+        incident_at: new Date(String(form.get('incident_at'))).toISOString(),
+        person_details: String(form.get('person_details')).trim(),
+        incident_details: String(form.get('incident_details')).trim(),
         notes: String(form.get('notes')).trim(),
       })
       onOpenChange(false)
@@ -65,10 +75,33 @@ export default function NewIncidentDialog({
             <label className="block text-sm font-medium">
               Incident date/time
               <input
-                name="incidentAt"
+                name="incident_at"
                 type="datetime-local"
                 required
+                max={nowLocal()}
+                onChange={(e) => {
+                  const now = nowLocal()
+                  if (e.target.value > now) e.target.value = now
+                }}
                 className={inputClass}
+              />
+            </label>
+
+            <label className="block text-sm font-medium">
+              Person details
+              <textarea
+                name="person_details"
+                rows={3}
+                className={`${inputClass} resize-y`}
+              />
+            </label>
+
+            <label className="block text-sm font-medium">
+              Incident details
+              <textarea
+                name="incident_details"
+                rows={3}
+                className={`${inputClass} resize-y`}
               />
             </label>
 

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { post } from '@/lib/api'
 import DashboardNavbar from '@/components/DashboardNavbar'
 import IncidentsTable from '@/components/IncidentsTable'
 import NewIncidentDialog, {
@@ -8,9 +9,8 @@ import NewIncidentDialog, {
 function Dashboard() {
   const [formOpen, setFormOpen] = useState(false)
 
-  // TODO: send to the backend once the destination is decided
   const createIncident = async (values: NewIncidentValues) => {
-    console.log('New incident', values)
+    await post('/incidents', values)
   }
 
   return (

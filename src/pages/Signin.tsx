@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
 import { Button } from '@/components/ui/button'
-import { post } from '@/lib/api'
+import { supabase } from '@/lib/supabase'
 
 const inputClass =
   'mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring'
@@ -19,10 +19,11 @@ export default function Signin() {
     setError('')
     setLoading(true)
     try {
-      await post('/auth/signin', {
+      const { error } = await supabase.auth.signInWithPassword({
         email: String(form.get('email')).trim(),
         password: String(form.get('password')),
       })
+      if (error) throw error
       navigate('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')

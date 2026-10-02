@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
 import { Button } from '@/components/ui/button'
-import { post } from '@/lib/api'
+import { supabase } from '@/lib/supabase'
 
 const inputClass =
   'mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring'
@@ -23,6 +23,7 @@ export default function Signup() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(false)
   const strength = passwordStrength(password)
 
@@ -32,14 +33,19 @@ export default function Signup() {
     setError('')
     setLoading(true)
     try {
-      await post('/auth/signup', {
-        fullName: String(form.get('fullName')).trim(),
+      const { data, error } = await supabase.auth.signUp({
         email: String(form.get('email')).trim(),
         password,
-        businessName: String(form.get('businessName')).trim() || undefined,
-        acceptedTerms: true, // server records the acceptance timestamp
+        options: {
+          data: {
+            full_name: String(form.get('fullName')).trim(),
+            business_name: String(form.get('businessName')).trim() || undefined,
+          },
+        },
       })
-      navigate('/dashboard')
+      if (error) throw error
+      if (data.session) navigate('/dashboard')
+      else setNotice('Check your email to confirm your account, then sign in.')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
@@ -113,6 +119,12 @@ export default function Signup() {
                 <Link to="/privacy" className="underline">Privacy Policy</Link>
               </span>
             </label>
+
+            {notice && (
+              <p role="status" className="text-sm text-muted-foreground">
+                {notice}
+              </p>
+            )}
 
             {error && (
               <p role="alert" className="text-sm text-destructive">

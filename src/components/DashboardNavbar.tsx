@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { LogOut, Menu, Plus, X } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { supabase } from '@/lib/supabase'
 
 interface DashboardNavbarProps {
   onNewForm: () => void
@@ -11,8 +12,10 @@ export default function DashboardNavbar({ onNewForm }: DashboardNavbarProps) {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
 
-  // TODO: call the backend logout endpoint once auth is wired up
-  const logout = () => navigate('/signin', { replace: true })
+  const logout = async () => {
+    await supabase.auth.signOut()
+    navigate('/signin', { replace: true })
+  }
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border/40 bg-background/40 backdrop-blur-md backdrop-saturate-150">
