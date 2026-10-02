@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Loader2 } from 'lucide-react'
 import { Link } from 'react-router'
 import { formatDateTime, formatStatus } from '@/lib/format'
 import type { Incident } from '@/types/incident'
@@ -42,9 +43,16 @@ const columns: Column[] = [
 
 interface IncidentsTableProps {
   incidents?: Incident[]
+  loading?: boolean
+  /** Loading failed: the error is shown elsewhere, so skip the empty message */
+  failed?: boolean
 }
 
-export default function IncidentsTable({ incidents = [] }: IncidentsTableProps) {
+export default function IncidentsTable({
+  incidents = [],
+  loading = false,
+  failed = false,
+}: IncidentsTableProps) {
   return (
     <div className="overflow-x-auto rounded-lg border border-border">
       <table className="w-full min-w-[560px] text-left text-sm">
@@ -62,13 +70,24 @@ export default function IncidentsTable({ incidents = [] }: IncidentsTableProps) 
           </tr>
         </thead>
         <tbody>
-          {incidents.length === 0 ? (
+          {loading || incidents.length === 0 ? (
             <tr>
               <td
                 colSpan={columns.length}
                 className="px-4 py-10 text-center text-muted-foreground"
               >
-                No incidents yet.
+                {loading ? (
+                  <span
+                    role="status"
+                    className="inline-flex items-center gap-2"
+                  >
+                    <Loader2 className="size-4 animate-spin" /> Loading incidents…
+                  </span>
+                ) : failed ? (
+                  'Could not load incidents.'
+                ) : (
+                  'No incidents yet.'
+                )}
               </td>
             </tr>
           ) : (

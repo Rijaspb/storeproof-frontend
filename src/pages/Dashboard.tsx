@@ -12,11 +12,13 @@ function Dashboard() {
 
   const [incidents, setIncidents] = useState<Incident[]>([])
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     get('/incidents')
       .then(setIncidents)
       .catch((e: Error) => setError(e.message))
+      .finally(() => setLoading(false))
   }, [])
 
   const createIncident = async (values: NewIncidentValues) => {
@@ -29,8 +31,8 @@ function Dashboard() {
       <DashboardNavbar onNewForm={() => setFormOpen(true)} />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-10 pt-20 sm:px-6 sm:pt-24">
         <h1 className="mb-6 text-2xl font-semibold">Incidents</h1>
-        {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
-        <IncidentsTable incidents={incidents} />
+        {error && <p className="mb-4 text-sm text-destructive">{error}</p>}
+        <IncidentsTable incidents={incidents} loading={loading} failed={!!error} />
       </main>
       <NewIncidentDialog
         open={formOpen}
