@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "react-router";
 import DashboardNavbar from "@/components/DashboardNavbar";
+import ErrorMessage from "@/components/ErrorMessage";
 import { get, patch } from "@/lib/api";
 import { formatDateTime, formatStatus } from "@/lib/format";
 import { INCIDENT_STATUSES, type IncidentDetails } from "@/types/incident";
@@ -64,12 +65,22 @@ function IncidentDetail() {
 
   useEffect(() => setLink(incident?.police_link ?? ""), [incident?.police_link]);
 
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (!saved) return;
+    const timer = setTimeout(() => setSaved(false), 3000);
+    return () => clearTimeout(timer);
+  }, [saved]);
+
   const save = async (path: string, body: object) => {
     setSaving(true);
+    setSaved(false);
     setError("");
     try {
       const updated = await patch(`/incidents/${id}/${path}`, body);
       setIncident((prev) => prev && { ...prev, ...updated });
+      setSaved(true);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -96,7 +107,15 @@ function IncidentDetail() {
           <ArrowLeft className="size-4" /> Back to incidents
         </Link>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <ErrorMessage message={error} />}
+        {saved && (
+          <p
+            role="status"
+            className="fixed bottom-4 right-4 rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background shadow-lg"
+          >
+            Saved
+          </p>
+        )}
         {!incident && !error && (
           <Loader2 className="size-5 animate-spin text-muted-foreground" />
         )}

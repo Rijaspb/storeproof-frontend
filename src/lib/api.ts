@@ -12,6 +12,8 @@ async function request(method: string, path: string, body?: unknown) {
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   })
+  // Expired or revoked session: clear it locally; ProtectedRoute then redirects to /signin
+  if (res.status === 401 && session) await supabase.auth.signOut({ scope: 'local' })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.error ?? 'Something went wrong')
   return data
