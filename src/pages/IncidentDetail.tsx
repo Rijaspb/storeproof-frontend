@@ -10,7 +10,6 @@ import {
   Loader2,
   NotebookPen,
   Save,
-  ShieldAlert,
   User,
   Video,
   type LucideIcon,
@@ -32,8 +31,8 @@ function Section({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
-      <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+    <section className="rounded-xl border border-border bg-card p-4">
+      <h2 className="mb-2flex items-center gap-2 text-sm font-medium text-muted-foreground">
         <Icon className="size-4" /> {title}
       </h2>
       {children}
@@ -43,7 +42,7 @@ function Section({
 
 const Text = ({ value }: { value: string | null }) =>
   value ? (
-    <p className="whitespace-pre-wrap text-sm leading-relaxed">{value}</p>
+    <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">{value}</p>
   ) : (
     <p className="text-sm text-muted-foreground">Not provided</p>
   );
@@ -99,10 +98,10 @@ function IncidentDetail() {
   return (
     <>
       <DashboardNavbar />
-      <main className="mx-auto w-full max-w-3xl px-4 pb-10 pt-20 sm:px-6 sm:pt-24">
+      <main className="mx-auto w-full max-w-5xl px-4 pb-8 pt-16 sm:px-6 sm:pt-20">
         <Link
           to="/dashboard"
-          className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-4" /> Back to incidents
         </Link>
@@ -121,18 +120,14 @@ function IncidentDetail() {
         )}
 
         {incident && (
-          <div className="space-y-4">
-            <header className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <span className="grid size-10 place-items-center rounded-lg bg-muted">
-                  <ShieldAlert className="size-5" />
-                </span>
-                <div>
-                  <p className="text-sm text-muted-foreground">Incident</p>
-                  <h1 className="text-xl font-semibold tracking-tight">
-                    {incident.incident_number}
-                  </h1>
-                </div>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="space-y-4 rounded-xl border border-border bg-card p-4 md:col-span-2">
+            <header className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-sm text-muted-foreground">Incident</p>
+                <h1 className="text-xl font-semibold tracking-tight">
+                  {incident.incident_number}
+                </h1>
               </div>
               <select
                 value={incident.status}
@@ -149,9 +144,9 @@ function IncidentDetail() {
               </select>
             </header>
 
-            <dl className="grid gap-4 rounded-xl border border-border bg-card p-5 shadow-sm sm:grid-cols-2">
-              {meta.map(([Icon, label, value], i) => (
-                <div key={label} className={i === 2 ? "sm:col-span-2" : ""}>
+            <dl className="grid gap-3 border-t border-border pt-4 sm:grid-cols-3">
+              {meta.map(([Icon, label, value]) => (
+                <div key={label}>
                   <dt className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     <Icon className="size-4" /> {label}
                   </dt>
@@ -159,6 +154,7 @@ function IncidentDetail() {
                 </div>
               ))}
             </dl>
+            </div>
 
             <Section icon={User} title="Person details">
               <Text value={incident.person_details} />
@@ -168,26 +164,6 @@ function IncidentDetail() {
             </Section>
             <Section icon={NotebookPen} title="Notes">
               <Text value={incident.notes} />
-            </Section>
-
-            <Section icon={Video} title={`Videos (${incident.videos.length})`}>
-              {incident.videos.length ? (
-                <ul className="divide-y divide-border">
-                  {incident.videos.map((v, i) => (
-                    <li
-                      key={v.id}
-                      className="flex items-center justify-between gap-3 py-2 text-sm"
-                    >
-                      <span className="font-medium">Video {i + 1}</span>
-                      <span className="text-muted-foreground">
-                        {formatDateTime(v.created_at)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-muted-foreground">No videos yet</p>
-              )}
             </Section>
 
             <Section icon={Link2} title="Police link">
@@ -223,6 +199,28 @@ function IncidentDetail() {
                 </a>
               )}
             </Section>
+
+            <div className="md:col-span-2">
+            <Section icon={Video} title={`Videos (${incident.videos.length})`}>
+              {incident.videos.length ? (
+                <ul className="divide-y divide-border">
+                  {incident.videos.map((v, i) => (
+                    <li
+                      key={v.id}
+                      className="flex items-center justify-between gap-3 py-2 text-sm"
+                    >
+                      <span className="font-medium">Video {i + 1}</span>
+                      <span className="text-muted-foreground">
+                        {formatDateTime(v.created_at)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">No videos yet</p>
+              )}
+            </Section>
+            </div>
           </div>
         )}
       </main>

@@ -54,22 +54,29 @@ export default function IncidentsTable({
   failed = false,
 }: IncidentsTableProps) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-border">
-      <table className="w-full min-w-[560px] text-left text-sm">
-        <thead className="border-b border-border bg-muted/50">
+    <div className="overflow-x-auto sm:rounded-lg sm:border sm:border-border">
+      <table className="block w-full text-left text-sm sm:table sm:min-w-140">
+        {/* On mobile the heading row only shows when there are no cards */}
+        <thead
+          className={`border-b border-border bg-foreground text-background ${
+            loading || incidents.length === 0
+              ? 'block rounded-lg sm:table-header-group'
+              : 'hidden sm:table-header-group'
+          }`}
+        >
           <tr>
             {columns.map((c) => (
               <th
                 key={c.key}
                 scope="col"
-                className="whitespace-nowrap px-3 py-3 font-medium text-muted-foreground sm:px-4"
+                className="px-3 py-3 font-medium max-sm:inline-block sm:whitespace-nowrap sm:px-4"
               >
                 {c.header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className="block sm:table-row-group">
           {loading || incidents.length === 0 ? (
             <tr>
               <td
@@ -94,13 +101,16 @@ export default function IncidentsTable({
             incidents.map((incident) => (
               <tr
                 key={incident.id}
-                className="relative border-b border-border last:border-0 hover:bg-muted/50"
+                className="relative mb-2 block rounded-lg border border-border p-1 hover:bg-muted/50 sm:mb-0 sm:table-row sm:rounded-none sm:border-0 sm:border-b sm:p-0 sm:last:border-0"
               >
                 {columns.map((c) => (
                   <td
                     key={c.key}
-                    className="whitespace-nowrap px-3 py-3 sm:px-4"
+                    className="flex gap-3 px-3 py-1.5 sm:table-cell sm:whitespace-nowrap sm:px-4 sm:py-3"
                   >
+                    <span className="w-24 shrink-0 text-muted-foreground sm:hidden">
+                      {c.header}
+                    </span>
                     {c.render(incident)}
                   </td>
                 ))}
