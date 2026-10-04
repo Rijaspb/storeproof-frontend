@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type SubmitEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
@@ -27,7 +27,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false)
   const strength = passwordStrength(password)
 
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = new FormData(e.currentTarget)
     setError('')
@@ -132,7 +132,7 @@ export default function Signup() {
               </p>
             )}
 
-            <Button type="submit" size="lg" className="w-full" disabled={loading}>
+            <Button type="submit" size="lg" className="w-full" disabled={loading || !!notice}>
               {loading ? 'Creating account…' : 'Sign up'}
             </Button>
           </form>
