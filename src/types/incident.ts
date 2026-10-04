@@ -22,7 +22,10 @@ export interface Incident {
 
 export interface IncidentVideo {
   id: string
-  r2_key: string
+  camera_name: string | null
+  /** null for footage added before direct uploads existed */
+  original_filename: string | null
+  size_bytes: number | null
   created_at: string
 }
 

@@ -17,6 +17,7 @@ import {
 import { Link, useParams } from "react-router";
 import DashboardNavbar from "@/components/DashboardNavbar";
 import ErrorMessage from "@/components/ErrorMessage";
+import Footage from "@/components/Footage";
 import { get, patch } from "@/lib/api";
 import { formatDateTime, formatStatus } from "@/lib/format";
 import { INCIDENT_STATUSES, type IncidentDetails } from "@/types/incident";
@@ -202,23 +203,14 @@ function IncidentDetail() {
 
             <div className="md:col-span-2">
             <Section icon={Video} title={`Videos (${incident.videos.length})`}>
-              {incident.videos.length ? (
-                <ul className="divide-y divide-border">
-                  {incident.videos.map((v, i) => (
-                    <li
-                      key={v.id}
-                      className="flex items-center justify-between gap-3 py-2 text-sm"
-                    >
-                      <span className="font-medium">Video {i + 1}</span>
-                      <span className="text-muted-foreground">
-                        {formatDateTime(v.created_at)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-muted-foreground">No videos yet</p>
-              )}
+              <Footage
+                incidentId={incident.id}
+                videos={incident.videos}
+                canUpload={incident.status === "pending"}
+                onAdded={(video) =>
+                  setIncident((prev) => prev && { ...prev, videos: [...prev.videos, video] })
+                }
+              />
             </Section>
             </div>
           </div>
