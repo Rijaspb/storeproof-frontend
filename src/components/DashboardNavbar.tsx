@@ -14,8 +14,17 @@ export default function DashboardNavbar({ onNewForm }: DashboardNavbarProps) {
   const navigate = useNavigate()
 
   const logout = async () => {
+    if (loggingOut) return
     setLoggingOut(true)
-    await supabase.auth.signOut()
+
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+    } catch (error) {
+      console.error('Sign out failed:', error)
+      await supabase.auth.signOut({ scope: 'local' }).catch(() => {})
+    }
+
     navigate('/signin', { replace: true })
   }
 
