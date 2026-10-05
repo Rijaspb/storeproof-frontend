@@ -1,4 +1,4 @@
-import { get, post } from './api'
+import { ApiError, get, post } from './api'
 import type { IncidentVideo } from '@/types/incident'
 
 export const MAX_UPLOAD_BYTES = 10 * 1024 ** 3 // keep in sync with the backend limit
@@ -40,7 +40,7 @@ function put(
     xhr.onload = () =>
       xhr.status >= 200 && xhr.status < 300
         ? resolve(xhr.getResponseHeader('ETag'))
-        : reject(new Error(`Upload failed (${xhr.status})`))
+        : reject(new ApiError(`Upload failed (${xhr.status})`, xhr.status))
     xhr.onerror = () => reject(new Error('Network error during upload'))
     xhr.onabort = () => reject(new DOMException('Aborted', 'AbortError'))
     signal.addEventListener('abort', () => xhr.abort(), { once: true })
@@ -48,12 +48,15 @@ function put(
   })
 }
 
+// 4xx errors (expired URL, conflict) won't fix themselves, except rate limiting
+const retryable = (e: unknown) => !(e instanceof ApiError && e.status < 500 && e.status !== 429)
+
 async function withRetry<T>(fn: () => Promise<T>, signal: AbortSignal) {
   for (let attempt = 1; ; attempt++) {
     try {
       return await fn()
     } catch (e) {
-      if (signal.aborted || attempt >= MAX_ATTEMPTS) throw e
+      if (signal.aborted || attempt >= MAX_ATTEMPTS || !retryable(e)) throw e
       await new Promise((r) => setTimeout(r, 1000 * 2 ** (attempt - 1)))
     }
   }
@@ -98,7 +101,10 @@ export async function uploadFootage(
           (_, i) => first + i,
         )
         // URLs are requested per batch so they never expire while waiting in a long queue
-        const { parts } = (await post(`${base}/${init.footageId}/parts`, { partNumbers })) as {
+        const { parts } = (await withRetry(
+          () => post(`${base}/${init.footageId}/parts`, { partNumbers }),
+          signal,
+        )) as {
           parts: { partNumber: number; url: string }[]
         }
         await Promise.all(
@@ -127,7 +133,7 @@ export async function uploadFootage(
       completeBody = { parts: etags.map((etag, i) => ({ partNumber: i + 1, etag })) }
     }
 
-    return await post(`${base}/${init.footageId}/complete`, completeBody)
+    return await withRetry(() => post(`${base}/${init.footageId}/complete`, completeBody), signal)
   } catch (e) {
     stop.abort()
     throw e

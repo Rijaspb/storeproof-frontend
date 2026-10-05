@@ -1,9 +1,10 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type SubmitEvent } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
 import { Button } from '@/components/ui/button'
+import { ApiError } from '@/lib/api'
 
 export interface NewIncidentValues {
-  /** Value from a datetime-local input, e.g. "2026-10-01T14:30" */
+  /** ISO 8601 timestamp, e.g. "2026-10-01T13:30:00.000Z" */
   incident_at: string
   person_details: string
   incident_details: string
@@ -39,7 +40,7 @@ export default function NewIncidentDialog({
     onOpenChange(next)
   }
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = new FormData(e.currentTarget)
     setError('')
@@ -53,14 +54,22 @@ export default function NewIncidentDialog({
       })
       onOpenChange(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
+      setError(
+        err instanceof ApiError
+          ? err.message.replace('incident_at', 'Date/time')
+          : 'Could not save the incident. Please try again.',
+      )
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={handleOpenChange}
+      disablePointerDismissal
+    >
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/50" />
         <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg border border-border bg-background p-4 shadow-lg sm:p-6">
@@ -92,6 +101,7 @@ export default function NewIncidentDialog({
               <textarea
                 name="person_details"
                 rows={3}
+                maxLength={5000}
                 className={`${inputClass} resize-y`}
               />
             </label>
@@ -101,6 +111,7 @@ export default function NewIncidentDialog({
               <textarea
                 name="incident_details"
                 rows={3}
+                maxLength={5000}
                 className={`${inputClass} resize-y`}
               />
             </label>
@@ -110,6 +121,7 @@ export default function NewIncidentDialog({
               <textarea
                 name="notes"
                 rows={4}
+                maxLength={5000}
                 className={`${inputClass} resize-y`}
               />
             </label>

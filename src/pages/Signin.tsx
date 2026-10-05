@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { useState, type SubmitEvent } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
 import { Button } from '@/components/ui/button'
@@ -10,10 +10,11 @@ const inputClass =
 
 export default function Signin() {
   const navigate = useNavigate()
+  const from = useLocation().state?.from?.pathname ?? '/dashboard'
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = new FormData(e.currentTarget)
     setError('')
@@ -24,7 +25,7 @@ export default function Signin() {
         password: String(form.get('password')),
       })
       if (error) throw error
-      navigate('/dashboard')
+      navigate(from, { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {

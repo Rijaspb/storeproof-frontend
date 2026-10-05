@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Download, Loader2, Upload, X } from "lucide-react";
 import ErrorMessage from "@/components/ErrorMessage";
+import { ApiError } from "@/lib/api";
 import { formatBytes, formatDateTime } from "@/lib/format";
 import {
   ACCEPT,
@@ -99,7 +100,11 @@ function Footage({ incidentId, videos, canUpload, onAdded }: Props) {
       } catch (err) {
         update(item.key, {
           state: "error",
-          error: isAbort(err) ? "Cancelled" : (err as Error).message,
+          error: isAbort(err)
+            ? "Cancelled"
+            : err instanceof ApiError
+              ? err.message
+              : "Upload failed. Please try again.",
         });
       }
     }
@@ -111,7 +116,7 @@ function Footage({ incidentId, videos, canUpload, onAdded }: Props) {
     try {
       await downloadFootage(incidentId, id);
     } catch (e) {
-      setError((e as Error).message);
+      setError(e instanceof ApiError ? e.message : "Could not start the download. Please try again.");
     } finally {
       setDownloading(null);
     }
@@ -121,7 +126,7 @@ function Footage({ incidentId, videos, canUpload, onAdded }: Props) {
     <div className="space-y-3">
       {error && <ErrorMessage message={error} />}
 
-      {canUpload ? (
+      {canUpload || busy ? (
         <div className="flex flex-wrap items-center gap-3">
           <label
             className={`inline-flex items-center gap-1.5 rounded-lg bg-foreground px-3 py-2 text-sm font-medium text-background ${
