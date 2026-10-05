@@ -18,7 +18,7 @@ import { Link, useParams } from "react-router";
 import DashboardNavbar from "@/components/DashboardNavbar";
 import ErrorMessage from "@/components/ErrorMessage";
 import Footage from "@/components/Footage";
-import { get, patch } from "@/lib/api";
+import { ApiError, get, patch } from "@/lib/api";
 import { formatDateTime, formatStatus } from "@/lib/format";
 import { INCIDENT_STATUSES, type IncidentDetails } from "@/types/incident";
 
@@ -33,7 +33,7 @@ function Section({
 }) {
   return (
     <section className="rounded-xl border border-border bg-card p-4">
-      <h2 className="mb-2flex items-center gap-2 text-sm font-medium text-muted-foreground">
+      <h2 className="mb-2 flex items-center gap-2 text-sm font-medium text-muted-foreground">
         <Icon className="size-4" /> {title}
       </h2>
       {children}
@@ -41,9 +41,20 @@ function Section({
   );
 }
 
+const isSafeUrl = (value: string) => {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
 const Text = ({ value }: { value: string | null }) =>
   value ? (
-    <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">{value}</p>
+    <p className="whitespace-pre-wrap wrap-break-word text-sm leading-relaxed">
+      {value}
+    </p>
   ) : (
     <p className="text-sm text-muted-foreground">Not provided</p>
   );
@@ -57,13 +68,22 @@ function IncidentDetail() {
     if (!id) return;
     get(`/incidents/${encodeURIComponent(id)}`)
       .then(setIncident)
-      .catch((e: Error) => setError(e.message));
+      .catch((e) =>
+        setError(
+          e instanceof ApiError
+            ? e.message
+            : "Could not load this incident. Please try again.",
+        ),
+      );
   }, [id]);
 
   const [link, setLink] = useState("");
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => setLink(incident?.police_link ?? ""), [incident?.police_link]);
+  useEffect(
+    () => setLink(incident?.police_link ?? ""),
+    [incident?.police_link],
+  );
 
   const [saved, setSaved] = useState(false);
 
@@ -78,17 +98,24 @@ function IncidentDetail() {
     setSaved(false);
     setError("");
     try {
-      const updated = await patch(`/incidents/${id}/${path}`, body);
+      const updated = await patch(
+        `/incidents/${encodeURIComponent(id!)}/${path}`,
+        body,
+      );
       setIncident((prev) => prev && { ...prev, ...updated });
       setSaved(true);
     } catch (e) {
-      setError((e as Error).message);
+      setError(
+        e instanceof ApiError
+          ? e.message
+          : "Could not save your changes. Please try again.",
+      );
     } finally {
       setSaving(false);
     }
   };
 
-  const meta:[LucideIcon, string, string][] = incident
+  const meta: [LucideIcon, string, string][] = incident
     ? [
         [Calendar, "Incident date/time", formatDateTime(incident.incident_at)],
         [Clock, "Created", formatDateTime(incident.created_at)],
@@ -123,38 +150,40 @@ function IncidentDetail() {
         {incident && (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <div className="space-y-4 rounded-xl border border-border bg-card p-4 md:col-span-2">
-            <header className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-sm text-muted-foreground">Incident</p>
-                <h1 className="text-xl font-semibold tracking-tight">
-                  {incident.incident_number}
-                </h1>
-              </div>
-              <select
-                value={incident.status}
-                disabled={saving}
-                onChange={(e) => save("status", { status: e.target.value })}
-                aria-label="Status"
-                className="rounded-full border border-border bg-muted px-3 py-1 text-sm font-medium capitalize disabled:opacity-60"
-              >
-                {INCIDENT_STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {formatStatus(s)}
-                  </option>
-                ))}
-              </select>
-            </header>
-
-            <dl className="grid gap-3 border-t border-border pt-4 sm:grid-cols-3">
-              {meta.map(([Icon, label, value]) => (
-                <div key={label}>
-                  <dt className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <Icon className="size-4" /> {label}
-                  </dt>
-                  <dd className="mt-1 break-all text-sm font-medium">{value}</dd>
+              <header className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm text-muted-foreground">Incident</p>
+                  <h1 className="text-xl font-semibold tracking-tight">
+                    {incident.incident_number}
+                  </h1>
                 </div>
-              ))}
-            </dl>
+                <select
+                  value={incident.status}
+                  disabled={saving}
+                  onChange={(e) => save("status", { status: e.target.value })}
+                  aria-label="Status"
+                  className="rounded-full border border-border bg-muted px-3 py-1 text-sm font-medium capitalize disabled:opacity-60"
+                >
+                  {INCIDENT_STATUSES.map((s) => (
+                    <option key={s} value={s}>
+                      {formatStatus(s)}
+                    </option>
+                  ))}
+                </select>
+              </header>
+
+              <dl className="grid gap-3 border-t border-border pt-4 sm:grid-cols-3">
+                {meta.map(([Icon, label, value]) => (
+                  <div key={label}>
+                    <dt className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <Icon className="size-4" /> {label}
+                    </dt>
+                    <dd className="mt-1 break-all text-sm font-medium">
+                      {value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             </div>
 
             <Section icon={User} title="Person details">
@@ -171,7 +200,7 @@ function IncidentDetail() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  save("police-link", { police_link: link });
+                  save("police-link", { police_link: link.trim() });
                 }}
                 className="flex gap-2"
               >
@@ -183,13 +212,15 @@ function IncidentDetail() {
                   className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm"
                 />
                 <button
-                  disabled={saving || link.trim() === (incident.police_link ?? "")}
+                  disabled={
+                    saving || link.trim() === (incident.police_link ?? "")
+                  }
                   className="inline-flex items-center gap-1.5 rounded-lg bg-foreground px-3 py-2 text-sm font-medium text-background disabled:opacity-50"
                 >
                   <Save className="size-4" /> Save
                 </button>
               </form>
-              {incident.police_link && (
+              {incident.police_link && isSafeUrl(incident.police_link) && (
                 <a
                   href={incident.police_link}
                   target="_blank"
@@ -202,16 +233,22 @@ function IncidentDetail() {
             </Section>
 
             <div className="md:col-span-2">
-            <Section icon={Video} title={`Videos (${incident.videos.length})`}>
-              <Footage
-                incidentId={incident.id}
-                videos={incident.videos}
-                canUpload={incident.status === "pending"}
-                onAdded={(video) =>
-                  setIncident((prev) => prev && { ...prev, videos: [...prev.videos, video] })
-                }
-              />
-            </Section>
+              <Section
+                icon={Video}
+                title={`Videos (${incident.videos.length})`}
+              >
+                <Footage
+                  incidentId={incident.id}
+                  videos={incident.videos}
+                  canUpload={incident.status === "pending"}
+                  onAdded={(video) =>
+                    setIncident(
+                      (prev) =>
+                        prev && { ...prev, videos: [...prev.videos, video] },
+                    )
+                  }
+                />
+              </Section>
             </div>
           </div>
         )}
