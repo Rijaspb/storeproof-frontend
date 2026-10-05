@@ -10,9 +10,11 @@ interface DashboardNavbarProps {
 
 export default function DashboardNavbar({ onNewForm }: DashboardNavbarProps) {
   const [open, setOpen] = useState(false)
+  const [loggingOut, setLoggingOut] = useState(false)
   const navigate = useNavigate()
 
   const logout = async () => {
+    setLoggingOut(true)
     await supabase.auth.signOut()
     navigate('/signin', { replace: true })
   }
@@ -31,8 +33,8 @@ export default function DashboardNavbar({ onNewForm }: DashboardNavbarProps) {
               <Plus /> New form
             </Button>
           )}
-          <Button variant="ghost" size="lg" onClick={logout}>
-            <LogOut /> Log out
+          <Button variant="ghost" size="lg" onClick={logout} disabled={loggingOut}>
+            <LogOut /> {loggingOut ? 'Logging out…' : 'Log out'}
           </Button>
         </div>
 
@@ -73,8 +75,9 @@ export default function DashboardNavbar({ onNewForm }: DashboardNavbarProps) {
             size="lg"
             className="h-11 w-full text-base"
             onClick={logout}
+            disabled={loggingOut}
           >
-            <LogOut /> Log out
+            <LogOut /> {loggingOut ? 'Logging out…' : 'Log out'}
           </Button>
         </div>
       )}

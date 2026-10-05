@@ -1,6 +1,6 @@
 export const formatDateTime = (iso: string) => {
   const date = new Date(iso)
-  return Number.isNaN(date.getTime()) ? '—' : date.toLocaleString()
+  return Number.isNaN(date.getTime()) ? '—' : date.toLocaleString('en-GB')
 }
 
 export const formatBytes = (bytes: number) => {

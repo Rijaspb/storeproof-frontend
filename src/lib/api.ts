@@ -1,11 +1,15 @@
 import { supabase } from './supabase'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
+if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
+  throw new Error('VITE_API_URL is not set')
+}
 
 export class ApiError extends Error {
   status: number
   constructor(message: string, status: number) {
     super(message)
+    this.name = 'ApiError'
     this.status = status
   }
 }
@@ -23,10 +27,13 @@ async function request(method: string, path: string, body?: unknown) {
   // Expired or revoked session: clear it locally; ProtectedRoute then redirects to /signin
   if (res.status === 401 && session) await supabase.auth.signOut({ scope: 'local' })
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new ApiError(data.error ?? 'Something went wrong', res.status)
+  if (!res.ok) {
+    const message = typeof data.error === 'string' ? data.error : 'Something went wrong'
+    throw new ApiError(message, res.status)
+  }
   return data
 }
 
 export const get = (path: string) => request('GET', path)
 export const patch = (path: string, body: unknown) => request('PATCH', path, body)
-export const post =(path: string, body: unknown) => request('POST', path, body)
+export const post = (path: string, body: unknown) => request('POST', path, body)

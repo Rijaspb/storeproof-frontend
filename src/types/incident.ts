@@ -12,7 +12,7 @@ export type IncidentStatus = (typeof INCIDENT_STATUSES)[number]
 
 export interface Incident {
   id: string
-  incident_number: string
+  incident_number: number
   /** ISO 8601 timestamp */
   incident_at: string
   status: IncidentStatus
@@ -22,7 +22,6 @@ export interface Incident {
 
 export interface IncidentVideo {
   id: string
-  camera_name: string | null
   /** null for footage added before direct uploads existed */
   original_filename: string | null
   size_bytes: number | null

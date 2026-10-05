@@ -33,7 +33,7 @@ function Dashboard() {
   }, [])
 
   const createIncident = async (values: NewIncidentValues) => {
-    const row = await post('/incidents', values)
+    const row: Incident = await post('/incidents', values)
     setIncidents((prev) => [row, ...prev])
   }
 
