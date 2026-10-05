@@ -24,7 +24,6 @@ export default function ForgotPassword() {
         { redirectTo: `${window.location.origin}/reset-password` },
       )
       if (error) throw error
-      // Same message whether or not the account exists, so emails can't be probed
       setNotice('If an account exists for that email, a reset link is on its way.')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
