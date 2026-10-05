@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
 import { Button } from '@/components/ui/button'
-import { post } from '@/lib/api'
+import { ApiError, post } from '@/lib/api'
 
 const inputClass =
   'mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring'
@@ -32,7 +32,11 @@ export default function Contact() {
       })
       setSent(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
+      setError(
+        err instanceof ApiError && err.status === 429
+          ? 'Too many attempts. Please try again in a few minutes.'
+          : 'Something went wrong. Please try again or email us directly.',
+      )
     } finally {
       setLoading(false)
     }
@@ -52,7 +56,7 @@ export default function Contact() {
             {details.map((d) => (
               <div key={d.label} className="rounded-lg border border-border p-4">
                 <dt className="text-sm text-muted-foreground">{d.label}</dt>
-                <dd className="mt-1 break-words font-medium">
+                <dd className="mt-1 wrap-break-word font-medium">
                   {d.href ? (
                     <a href={d.href} className="hover:underline">
                       {d.value}

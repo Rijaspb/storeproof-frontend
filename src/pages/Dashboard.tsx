@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { get, post } from '@/lib/api'
+import { ApiError, get, post } from '@/lib/api'
 import type { Incident } from '@/types/incident'
 import DashboardNavbar from '@/components/DashboardNavbar'
 import ErrorMessage from '@/components/ErrorMessage'
@@ -16,10 +16,20 @@ function Dashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    get('/incidents')
-      .then(setIncidents)
-      .catch((e: Error) => setError(e.message))
-      .finally(() => setLoading(false))
+    const loadIncidents = async () => {
+      try {
+        const data = await get('/incidents')
+        setIncidents(Array.isArray(data) ? data : [])
+      } catch (e) {
+        setError(
+          e instanceof ApiError ? e.message : 'Could not load incidents. Please try again.'
+        )
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadIncidents()
   }, [])
 
   const createIncident = async (values: NewIncidentValues) => {
