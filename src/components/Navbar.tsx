@@ -28,10 +28,17 @@ export default function Navbar() {
           >
             Contact
           </Link>
-          <Button variant="ghost" size="lg">
+          <Button
+            variant="ghost"
+            size="lg"
+            nativeButton={false}
+            render={<Link to="/signin" />}
+          >
             Sign in
           </Button>
-          <Button size="lg">Sign up</Button>
+          <Button size="lg" nativeButton={false} render={<Link to="/signup" />}>
+            Sign up
+          </Button>
         </div>
 
         {/* Mobile toggle */}
@@ -73,11 +80,19 @@ export default function Navbar() {
               variant="outline"
               size="lg"
               className="h-11 w-full text-base"
+              nativeButton={false}
+              render={<Link to="/signin" />}
               onClick={close}
             >
               Sign in
             </Button>
-            <Button size="lg" className="h-11 w-full text-base" onClick={close}>
+            <Button
+              size="lg"
+              className="h-11 w-full text-base"
+              nativeButton={false}
+              render={<Link to="/signup" />}
+              onClick={close}
+            >
               Sign up
             </Button>
           </div>
