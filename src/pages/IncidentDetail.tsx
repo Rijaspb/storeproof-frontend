@@ -6,6 +6,7 @@ import {
   ExternalLink,
   FileText,
   Hash,
+  Image as ImageIcon,
   Link2,
   Loader2,
   NotebookPen,
@@ -18,6 +19,7 @@ import { Link, useParams } from "react-router";
 import DashboardNavbar from "@/components/DashboardNavbar";
 import ErrorMessage from "@/components/ErrorMessage";
 import Footage from "@/components/Footage";
+import IncidentImages from "@/components/IncidentImages";
 import { ApiError, get, patch } from "@/lib/api";
 import { formatDateTime, formatStatus } from "@/lib/format";
 import { INCIDENT_STATUSES, type IncidentDetails } from "@/types/incident";
@@ -184,6 +186,15 @@ function IncidentDetail() {
                   </div>
                 ))}
               </dl>
+            </div>
+
+            <div className="md:row-span-4 [&>section]:h-full">
+              <Section icon={ImageIcon} title="Images">
+                <IncidentImages
+                  incidentId={incident.id}
+                  canUpload={incident.status === "pending"}
+                />
+              </Section>
             </div>
 
             <Section icon={User} title="Person details">
