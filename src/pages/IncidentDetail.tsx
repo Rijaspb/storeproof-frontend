@@ -80,7 +80,13 @@ function IncidentDetail() {
   }, [id]);
 
   const [link, setLink] = useState("");
+  const [crimeRef, setCrimeRef] = useState("");
   const [saving, setSaving] = useState(false);
+
+  useEffect(
+    () => setCrimeRef(incident?.crime_reference ?? ""),
+    [incident?.crime_reference],
+  );
 
   useEffect(
     () => setLink(incident?.police_link ?? ""),
@@ -207,13 +213,39 @@ function IncidentDetail() {
               <Text value={incident.notes} />
             </Section>
 
-            <Section icon={Link2} title="Police link">
+            <div className="[&>section]:flex [&>section]:h-full [&>section]:flex-col">
+            <Section icon={Link2} title="Police details">
+              <div className="my-auto">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  save("crime-reference", { crime_reference: crimeRef.trim() });
+                }}
+                className="flex gap-2"
+              >
+                <input
+                  type="text"
+                  value={crimeRef}
+                  maxLength={100}
+                  onChange={(e) => setCrimeRef(e.target.value)}
+                  placeholder="Crime reference number"
+                  className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                />
+                <button
+                  disabled={
+                    saving || crimeRef.trim() === (incident.crime_reference ?? "")
+                  }
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-foreground px-3 py-2 text-sm font-medium text-background disabled:opacity-50"
+                >
+                  <Save className="size-4" /> Save
+                </button>
+              </form>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   save("police-link", { police_link: link.trim() });
                 }}
-                className="flex gap-2"
+                className="mt-3 flex gap-2"
               >
                 <input
                   type="url"
@@ -241,7 +273,9 @@ function IncidentDetail() {
                   <ExternalLink className="size-4" /> Open link
                 </a>
               )}
+              </div>
             </Section>
+            </div>
 
             <div className="md:col-span-2">
               <Section

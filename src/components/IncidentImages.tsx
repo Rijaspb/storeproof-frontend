@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { ImagePlus, Loader2 } from "lucide-react";
+import { Download, ImagePlus, Loader2 } from "lucide-react";
 import ErrorMessage from "@/components/ErrorMessage";
 import { ApiError, get, post } from "@/lib/api";
 
@@ -81,7 +81,17 @@ function IncidentImages({ incidentId, canUpload }: Props) {
       {SLOTS.map((slot) => (
         <div key={slot} className="space-y-2">
           {urls[slot] ? (
-            <img
+            <div className="relative">
+              <a
+                href={urls[slot]}
+                download
+                aria-label={`Download image ${slot}`}
+                title="Download"
+                className="absolute right-2 top-2 rounded-md bg-background/80 p-1.5 text-foreground shadow hover:bg-background"
+              >
+                <Download className="size-4" />
+              </a>
+              <img
               src={urls[slot]}
               alt={`Incident image ${slot}`}
               onLoad={() => refreshed.current.delete(slot)}
@@ -92,7 +102,8 @@ function IncidentImages({ incidentId, canUpload }: Props) {
                 loadUrl(slot).catch(() => setError("Could not load an image. Refresh the page to try again."));
               }}
               className="max-h-80 w-full rounded-lg border border-border object-contain"
-            />
+              />
+            </div>
           ) : (
             <p className="flex h-24 items-center justify-center rounded-lg border border-dashed border-border text-sm text-muted-foreground">
               No image {slot}
