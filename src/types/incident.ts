@@ -33,6 +33,7 @@ export interface IncidentDetails extends Incident {
   incident_details: string | null
   police_link: string | null
   crime_reference: string | null
+  linked_incidents: { id: string; incident_number: number }[]
   notes: string | null
   videos: IncidentVideo[]
 }
