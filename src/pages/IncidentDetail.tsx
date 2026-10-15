@@ -10,6 +10,7 @@ import {
   Link2,
   Loader2,
   NotebookPen,
+  Pencil,
   Save,
   User,
   X,
@@ -35,7 +36,7 @@ function Section({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-card p-4">
+    <section className="relative rounded-xl border border-border bg-card p-4">
       <h2 className="mb-2 flex items-center gap-2 text-sm font-medium text-muted-foreground">
         <Icon className="size-4" /> {title}
       </h2>
@@ -61,6 +62,67 @@ const Text = ({ value }: { value: string | null }) =>
   ) : (
     <p className="text-sm text-muted-foreground">Not provided</p>
   );
+
+function EditableText({
+  value,
+  disabled,
+  onSave,
+}: {
+  value: string | null;
+  disabled: boolean;
+  onSave: (value: string) => Promise<boolean>;
+}) {
+  const [draft, setDraft] = useState<string | null>(null);
+
+  if (draft === null)
+    return (
+      <>
+        <button
+          type="button"
+          aria-label="Edit"
+          title="Edit"
+          onClick={() => setDraft(value ?? "")}
+          className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
+        >
+          <Pencil className="size-4" />
+        </button>
+        <Text value={value} />
+      </>
+    );
+
+  return (
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        if (await onSave(draft.trim())) setDraft(null);
+      }}
+    >
+      <textarea
+        value={draft}
+        autoFocus
+        rows={4}
+        maxLength={5000}
+        onChange={(e) => setDraft(e.target.value)}
+        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+      />
+      <div className="mt-2 flex gap-2">
+        <button
+          disabled={disabled || draft.trim() === (value ?? "")}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-foreground px-3 py-2 text-sm font-medium text-background disabled:opacity-50"
+        >
+          <Save className="size-4" /> Save
+        </button>
+        <button
+          type="button"
+          onClick={() => setDraft(null)}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium"
+        >
+          <X className="size-4" /> Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
 
 function IncidentDetail() {
   const { id } = useParams();
@@ -118,12 +180,14 @@ function IncidentDetail() {
       );
       setIncident((prev) => prev && { ...prev, ...updated });
       setSaved(true);
+      return true;
     } catch (e) {
       setError(
         e instanceof ApiError
           ? e.message
           : "Could not save your changes. Please try again.",
       );
+      return false;
     } finally {
       setSaving(false);
     }
@@ -226,13 +290,25 @@ function IncidentDetail() {
             </div>
 
             <Section icon={User} title="Person details">
-              <Text value={incident.person_details} />
+              <EditableText
+                value={incident.person_details}
+                disabled={saving}
+                onSave={(v) => save("person-details", { person_details: v })}
+              />
             </Section>
             <Section icon={FileText} title="Incident details">
-              <Text value={incident.incident_details} />
+              <EditableText
+                value={incident.incident_details}
+                disabled={saving}
+                onSave={(v) => save("incident-details", { incident_details: v })}
+              />
             </Section>
             <Section icon={NotebookPen} title="Notes">
-              <Text value={incident.notes} />
+              <EditableText
+                value={incident.notes}
+                disabled={saving}
+                onSave={(v) => save("notes", { notes: v })}
+              />
             </Section>
 
             <div className="[&>section]:flex [&>section]:h-full [&>section]:flex-col">
