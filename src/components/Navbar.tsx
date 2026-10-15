@@ -11,7 +11,7 @@ export default function Navbar() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border/40 bg-background/40 backdrop-blur-md backdrop-saturate-150">
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16 sm:px-6">
         <Link to="/home" className="text-lg font-semibold tracking-tight">
-          storeproof
+          vistrel
         </Link>
 
         {/* Desktop */}

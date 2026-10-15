@@ -7,15 +7,15 @@ export default function Terms() {
   return (
     <LegalPage title="Terms of Service" updated="2 October 2026">
       <p className="mt-6 text-lg text-muted-foreground">
-        These terms govern your use of StoreProof. By creating an account you agree to
+        These terms govern your use of Vistrel. By creating an account you agree to
         them. If you don't agree, please don't use the service.
       </p>
 
-      <LegalSection title="What StoreProof does">
+      <LegalSection title="What Vistrel does">
         <p>
-          StoreProof helps shop owners record incidents and gather CCTV footage of the
+          Vistrel helps shop owners record incidents and gather CCTV footage of the
           people involved in one place, so it can be reviewed and shared with the police.
-          StoreProof gathers footage; it does not decide what happened or accuse anyone.
+          Vistrel gathers footage; it does not decide what happened or accuse anyone.
           You review the material and decide what to do with it.
         </p>
       </LegalSection>
@@ -64,7 +64,7 @@ export default function Terms() {
       <LegalSection title="Acceptable use">
         <p>You agree not to:</p>
         <ul className={list}>
-          <li>use StoreProof for anything unlawful, or to monitor people unfairly;</li>
+          <li>use Vistrel for anything unlawful, or to monitor people unfairly;</li>
           <li>upload footage you aren't entitled to use;</li>
           <li>try to access other users' data or disrupt the service;</li>
           <li>copy, resell or reverse-engineer the service.</li>
@@ -82,7 +82,7 @@ export default function Terms() {
 
       <LegalSection title="The pilot">
         <p>
-          StoreProof is in a pilot stage. Features may change, be removed or occasionally
+          Vistrel is in a pilot stage. Features may change, be removed or occasionally
           be unavailable, and we may fix problems without notice. Please keep your own
           copies of anything you can't afford to lose.
         </p>
@@ -90,7 +90,7 @@ export default function Terms() {
 
       <LegalSection title="Our responsibility">
         <p>
-          We take care to provide the service, but we provide it "as is". StoreProof may
+          We take care to provide the service, but we provide it "as is". Vistrel may
           miss footage or make mistakes, so you should always review the material
           yourself before relying on it. To the extent the law allows, we are not liable
           for indirect or lost profits, or for outcomes that depend on decisions you or
@@ -101,7 +101,7 @@ export default function Terms() {
 
       <LegalSection title="Ending your account">
         <p>
-          You can stop using StoreProof at any time and ask us to delete your account and
+          You can stop using Vistrel at any time and ask us to delete your account and
           data. We may suspend or close accounts that break these terms. What happens to
           your data afterwards is set out in the{' '}
           <Link to="/privacy" className="underline">Privacy Policy</Link>.
@@ -111,7 +111,7 @@ export default function Terms() {
       <LegalSection title="Changes and governing law">
         <p>
           We may update these terms; if the change matters, we'll tell you and update the
-          date above. Continuing to use StoreProof means you accept the new terms. These
+          date above. Continuing to use Vistrel means you accept the new terms. These
           terms are governed by the law of Scotland, and the Scottish courts have
           jurisdiction.
         </p>
