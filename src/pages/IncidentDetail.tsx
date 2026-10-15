@@ -6,11 +6,13 @@ import {
   ExternalLink,
   FileText,
   Hash,
+  Image as ImageIcon,
   Link2,
   Loader2,
   NotebookPen,
   Save,
   User,
+  X,
   Video,
   type LucideIcon,
 } from "lucide-react";
@@ -18,9 +20,10 @@ import { Link, useParams } from "react-router";
 import DashboardNavbar from "@/components/DashboardNavbar";
 import ErrorMessage from "@/components/ErrorMessage";
 import Footage from "@/components/Footage";
-import { ApiError, get, patch } from "@/lib/api";
+import IncidentImages from "@/components/IncidentImages";
+import { ApiError, del, get, patch, post } from "@/lib/api";
 import { formatDateTime, formatStatus } from "@/lib/format";
-import { INCIDENT_STATUSES, type IncidentDetails } from "@/types/incident";
+import { INCIDENT_STATUSES, type Incident, type IncidentDetails } from "@/types/incident";
 
 function Section({
   icon: Icon,
@@ -78,7 +81,18 @@ function IncidentDetail() {
   }, [id]);
 
   const [link, setLink] = useState("");
+  const [crimeRef, setCrimeRef] = useState("");
   const [saving, setSaving] = useState(false);
+  const [others, setOthers] = useState<Incident[]>([]);
+
+  useEffect(() => {
+    get("/incidents").then(setOthers).catch(() => {});
+  }, []);
+
+  useEffect(
+    () => setCrimeRef(incident?.crime_reference ?? ""),
+    [incident?.crime_reference],
+  );
 
   useEffect(
     () => setLink(incident?.police_link ?? ""),
@@ -110,6 +124,22 @@ function IncidentDetail() {
           ? e.message
           : "Could not save your changes. Please try again.",
       );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const changeLink = async (
+    call: () => Promise<unknown>,
+    apply: (l: IncidentDetails["linked_incidents"]) => IncidentDetails["linked_incidents"],
+  ) => {
+    setSaving(true);
+    setError("");
+    try {
+      await call();
+      setIncident((prev) => prev && { ...prev, linked_incidents: apply(prev.linked_incidents) });
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : "Could not update links. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -186,6 +216,15 @@ function IncidentDetail() {
               </dl>
             </div>
 
+            <div className="md:row-span-4 [&>section]:h-full">
+              <Section icon={ImageIcon} title="Images">
+                <IncidentImages
+                  incidentId={incident.id}
+                  canUpload={incident.status === "pending"}
+                />
+              </Section>
+            </div>
+
             <Section icon={User} title="Person details">
               <Text value={incident.person_details} />
             </Section>
@@ -196,13 +235,39 @@ function IncidentDetail() {
               <Text value={incident.notes} />
             </Section>
 
-            <Section icon={Link2} title="Police link">
+            <div className="[&>section]:flex [&>section]:h-full [&>section]:flex-col">
+            <Section icon={Link2} title="Police details">
+              <div className="my-auto">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  save("crime-reference", { crime_reference: crimeRef.trim() });
+                }}
+                className="flex gap-2"
+              >
+                <input
+                  type="text"
+                  value={crimeRef}
+                  maxLength={100}
+                  onChange={(e) => setCrimeRef(e.target.value)}
+                  placeholder="Crime reference number"
+                  className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                />
+                <button
+                  disabled={
+                    saving || crimeRef.trim() === (incident.crime_reference ?? "")
+                  }
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-foreground px-3 py-2 text-sm font-medium text-background disabled:opacity-50"
+                >
+                  <Save className="size-4" /> Save
+                </button>
+              </form>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   save("police-link", { police_link: link.trim() });
                 }}
-                className="flex gap-2"
+                className="mt-3 flex gap-2"
               >
                 <input
                   type="url"
@@ -220,6 +285,54 @@ function IncidentDetail() {
                   <Save className="size-4" /> Save
                 </button>
               </form>
+              <select
+                value=""
+                disabled={saving}
+                onChange={(e) => {
+                  const o = others.find((x) => x.id === e.target.value);
+                  if (o)
+                    changeLink(() => post(`/incidents/${incident.id}/links`, { linked_incident_id: o.id }), (l) => [...l, o]);
+                }}
+                className="mt-3 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              >
+                <option value="">Link another incident…</option>
+                {others
+                  .filter((o) => o.id !== incident.id && !incident.linked_incidents.some((l) => l.id === o.id))
+                  .map((o) => (
+                    <option key={o.id} value={o.id}>
+                      #{o.incident_number}
+                    </option>
+                  ))}
+              </select>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {incident.linked_incidents.map((l) => (
+                  <span key={l.id} className="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-sm">
+                    #{l.incident_number}
+                    <a
+                      href={`/dashboard/incidents/${l.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Open incident ${l.incident_number} in new tab`}
+                      title="Open in new tab"
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <ExternalLink className="size-3.5" />
+                    </a>
+                    <button
+                      type="button"
+                      disabled={saving}
+                      aria-label={`Unlink incident ${l.incident_number}`}
+                      title="Unlink"
+                      onClick={() =>
+                        changeLink(() => del(`/incidents/${incident.id}/links/${l.id}`), (x) => x.filter((y) => y.id !== l.id))
+                      }
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  </span>
+                ))}
+              </div>
               {incident.police_link && isSafeUrl(incident.police_link) && (
                 <a
                   href={incident.police_link}
@@ -230,7 +343,9 @@ function IncidentDetail() {
                   <ExternalLink className="size-4" /> Open link
                 </a>
               )}
+              </div>
             </Section>
+            </div>
 
             <div className="md:col-span-2">
               <Section

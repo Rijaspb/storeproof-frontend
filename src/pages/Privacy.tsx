@@ -7,8 +7,8 @@ export default function Privacy() {
   return (
     <LegalPage title="Privacy Policy" updated="2 October 2026">
       <p className="mt-6 text-lg text-muted-foreground">
-        This policy explains what personal data StoreProof collects, why, who we share it
-        with, and the choices you have. StoreProof is based in Glasgow, Scotland, and we
+        This policy explains what personal data Vistrel collects, why, who we share it
+        with, and the choices you have. Vistrel is based in Glasgow, Scotland, and we
         follow UK data protection law (UK GDPR and the Data Protection Act 2018).
       </p>
 
@@ -19,11 +19,11 @@ export default function Privacy() {
         <ul className={list}>
           <li>
             <strong className="text-foreground">Your account data</strong> (your name,
-            email and so on): StoreProof is the controller.
+            email and so on): Vistrel is the controller.
           </li>
           <li>
             <strong className="text-foreground">Incident reports and footage</strong>{' '}
-            about people in your shop: you are the controller and StoreProof is your
+            about people in your shop: you are the controller and Vistrel is your
             processor. We only handle this data on your instructions, to provide the
             service, as set out in our{' '}
             <Link to="/dpa" className="underline">Data Processing Agreement</Link>. You
@@ -109,7 +109,7 @@ export default function Privacy() {
 
       <LegalSection title="Who we share it with">
         <p>
-          We use trusted providers to run StoreProof. They process data only on our
+          We use trusted providers to run Vistrel. They process data only on our
           instructions:
         </p>
         <ul className={list}>

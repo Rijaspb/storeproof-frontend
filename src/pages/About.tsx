@@ -4,11 +4,11 @@ import Navbar from '@/components/Navbar'
 const beliefs = [
   {
     title: 'All of it, not bits of it.',
-    body: 'StoreProof saves the footage from every camera that caught the person, covering their whole visit, so nothing important gets left behind.',
+    body: 'Vistrel saves the footage from every camera that caught the person, covering their whole visit, so nothing important gets left behind.',
   },
   {
     title: 'You stay in charge.',
-    body: "StoreProof gathers the footage. It doesn't accuse anyone. You watch it, decide what happened, and choose what to share.",
+    body: "Vistrel gathers the footage. It doesn't accuse anyone. You watch it, decide what happened, and choose what to share.",
   },
   {
     title: 'Your footage stays yours.',
@@ -25,10 +25,10 @@ export default function About() {
         <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
           <header>
             <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              About StoreProof
+              About Vistrel
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              StoreProof finds every camera that caught someone in your shop and
+              Vistrel finds every camera that caught someone in your shop and
               saves their footage in one place, from the moment they walk in to
               the moment they leave, ready to hand to the police.
             </p>
@@ -50,7 +50,7 @@ export default function About() {
                 security team to do this. They have a shop to run.
               </p>
               <p>
-                I built StoreProof because that job shouldn't fall on the person
+                I built Vistrel because that job shouldn't fall on the person
                 who's already been stolen from.
               </p>
             </div>
@@ -61,7 +61,7 @@ export default function About() {
               Who it's for
             </h2>
             <p className="mt-4 text-muted-foreground">
-              StoreProof is built for independent convenience stores, corner
+              Vistrel is built for independent convenience stores, corner
               shops and off-licences in Scotland: owner-run businesses with a
               CCTV system already in place and no time to become video analysts.
               If you've ever been asked by the police for "the footage" and
@@ -97,7 +97,7 @@ export default function About() {
             <p className="mt-2 text-muted-foreground">
               I'm a full-stack developer based in Paisley. I came to Scotland
               from Kerala, India, and hold an MSc in Business Analytics from the
-              University of Dundee. I build StoreProof full-time, and every
+              University of Dundee. I build Vistrel full-time, and every
               feature starts with a conversation with a shop owner.
             </p>
           </section>

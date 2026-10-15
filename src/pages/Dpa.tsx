@@ -7,7 +7,7 @@ export default function Dpa() {
   return (
     <LegalPage title="Data Processing Agreement" updated="3 October 2026">
       <p className="mt-6 text-lg text-muted-foreground">
-        This agreement applies when StoreProof ("we", the processor) handles personal
+        This agreement applies when Vistrel ("we", the processor) handles personal
         data on behalf of a shop owner ("you", the controller) through the service. It
         forms part of our <Link to="/terms" className="underline">Terms of Service</Link>{' '}
         and is made under Article 28 of the UK GDPR. By accepting the Terms, you accept

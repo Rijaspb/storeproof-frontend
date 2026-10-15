@@ -18,7 +18,7 @@ export default function Hero() {
           A £10 theft shouldn't cost you two hours of CCTV.
         </h1>
         <p className="mt-6 max-w-2xl text-base text-muted-foreground sm:mt-8 sm:text-lg">
-          Your staff log what they saw while it's fresh. StoreProof finds the person on every camera that caught them and saves all their footage, from the moment they walk in to the moment they leave, ready to share with the police. No hunting through hours of video, and no details lost between the shop floor and the office.
+          Your staff log what they saw while it's fresh. Vistrel finds the person on every camera that caught them and saves all their footage, from the moment they walk in to the moment they leave, ready to share with the police. No hunting through hours of video, and no details lost between the shop floor and the office.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row">
           <Button
